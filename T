@@ -3,185 +3,218 @@
 
 <head>
 
-  <title>PO vs UC Dashboard</title>
+<meta charset="UTF-8">
 
-  <style>
+<title>PO_PRICE vs UC_PRICE Dashboard</title>
 
-    body{
-      font-family:Arial;
-      background:#f4f6f9;
-      padding:20px;
-      margin:0;
-    }
+<style>
 
-    h1{
-      text-align:center;
-      margin-bottom:25px;
-    }
+body{
+  font-family:Arial;
+  background:#f5f5f5;
+  padding:20px;
+  margin:0;
+}
 
-    .summary{
-      display:flex;
-      gap:20px;
-      margin-bottom:25px;
-    }
+h1{
+  text-align:center;
+  margin-bottom:25px;
+}
 
-    .card{
-      flex:1;
-      padding:20px;
-      border-radius:10px;
-      color:white;
-      text-align:center;
-      font-size:20px;
-      font-weight:bold;
-    }
+.summary{
+  display:flex;
+  gap:20px;
+  margin-bottom:25px;
+}
 
-    .green{
-      background:#28a745;
-    }
+.card{
+  flex:1;
+  padding:20px;
+  border-radius:10px;
+  color:white;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+}
 
-    .red{
-      background:#dc3545;
-    }
+.green{
+  background:#28a745;
+}
 
-    .blue{
-      background:#007bff;
-    }
+.red{
+  background:#dc3545;
+}
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-      background:white;
-    }
+.blue{
+  background:#007bff;
+}
 
-    th{
-      background:#222;
-      color:white;
-      padding:12px;
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
 
-    td{
-      padding:10px;
-      border-bottom:1px solid #ddd;
-      text-align:center;
-    }
+th{
+  background:#111;
+  color:white;
+  padding:12px;
+}
 
-    .match{
-      background:#d4edda;
-    }
+td{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  text-align:center;
+}
 
-    .flag{
-      background:#f8d7da;
-      font-weight:bold;
-    }
+.match{
+  background:#d4edda;
+}
 
-  </style>
+.flag{
+  background:#f8d7da;
+  font-weight:bold;
+}
+
+.loader{
+  text-align:center;
+  padding:20px;
+  font-size:20px;
+}
+
+</style>
 
 </head>
 
 <body>
 
-  <h1>PO_PRICE vs UC_PRICE Dashboard</h1>
+<h1>PO_PRICE vs UC_PRICE Dashboard</h1>
 
-  <div class="summary">
+<div class="summary">
 
-    <div class="card green">
-      MATCHED
-      <div id="matchedCount">0</div>
-    </div>
-
-    <div class="card red">
-      FLAGGED
-      <div id="flagCount">0</div>
-    </div>
-
-    <div class="card blue">
-      TOTAL
-      <div id="totalCount">0</div>
-    </div>
-
+  <div class="card green">
+    MATCH
+    <div id="matchCount">0</div>
   </div>
 
-  <table>
+  <div class="card red">
+    FLAG
+    <div id="flagCount">0</div>
+  </div>
 
-    <thead>
+  <div class="card blue">
+    TOTAL
+    <div id="totalCount">0</div>
+  </div>
 
-      <tr>
-        <th>PoNumber</th>
-        <th>FacilityName</th>
-        <th>SkuCode</th>
-        <th>OrderedQty</th>
-        <th>PO_PRICE</th>
-        <th>UC_PRICE</th>
-        <th>STATUS</th>
-      </tr>
+</div>
 
-    </thead>
+<div class="loader" id="loader">
+Loading Dashboard...
+</div>
 
-    <tbody id="tableBody"></tbody>
+<table>
 
-  </table>
+<thead>
 
-  <script>
+<tr>
+<th>PoNumber</th>
+<th>FacilityName</th>
+<th>SkuCode</th>
+<th>OrderedQty</th>
+<th>PO_PRICE</th>
+<th>UC_PRICE</th>
+<th>STATUS</th>
+</tr>
 
-    const API_URL =
-    "https://script.google.com/macros/s/AKfycbwDlS2WBFsAdN2Nz92iYkcqU5IpVjp45At7N7zDYSpekPQTBS9o8Ed47QcUZzok3HLTgw/exec";
+</thead>
 
-    fetch(API_URL)
+<tbody id="tbody"></tbody>
 
-    .then(response => response.json())
+</table>
 
-    .then(data => {
+<script>
 
-      let matched = 0;
-      let flagged = 0;
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwDlS2WBFsAdN2Nz92iYkcqU5IpVjp45At7N7zDYSpekPQTBS9o8Ed47QcUZzok3HLTgw/exec";
 
-      const tbody =
-      document.getElementById("tableBody");
+async function loadDashboard(){
 
-      data.forEach(row => {
+  try{
 
-        if(row.STATUS === "MATCH"){
-          matched++;
-        }else{
-          flagged++;
-        }
+    const response =
+    await fetch(API_URL);
 
-        const tr =
-        document.createElement("tr");
+    const data =
+    await response.json();
 
-        tr.className =
-        row.STATUS === "MATCH"
-        ? "match"
-        : "flag";
+    const tbody =
+    document.getElementById("tbody");
 
-        tr.innerHTML = `
+    tbody.innerHTML = "";
 
-          <td>${row.PoNumber}</td>
-          <td>${row.FacilityName}</td>
-          <td>${row.SkuCode}</td>
-          <td>${row.OrderedQty}</td>
-          <td>${row.PO_PRICE}</td>
-          <td>${row.UC_PRICE}</td>
-          <td>${row.STATUS}</td>
+    let match = 0;
+    let flag = 0;
 
-        `;
+    data.forEach(row => {
 
-        tbody.appendChild(tr);
+      if(row.STATUS === "MATCH"){
+        match++;
+      }else{
+        flag++;
+      }
 
-      });
+      const tr =
+      document.createElement("tr");
 
-      document.getElementById("matchedCount")
-      .innerText = matched;
+      tr.className =
+      row.STATUS === "MATCH"
+      ? "match"
+      : "flag";
 
-      document.getElementById("flagCount")
-      .innerText = flagged;
+      tr.innerHTML = `
+        <td>${row.PoNumber || ""}</td>
+        <td>${row.FacilityName || ""}</td>
+        <td>${row.SkuCode || ""}</td>
+        <td>${row.OrderedQty || ""}</td>
+        <td>${row.PO_PRICE || ""}</td>
+        <td>${row.UC_PRICE || ""}</td>
+        <td>${row.STATUS || ""}</td>
+      `;
 
-      document.getElementById("totalCount")
-      .innerText = data.length;
+      tbody.appendChild(tr);
 
     });
 
-  </script>
+    document.getElementById("matchCount")
+    .innerText = match;
+
+    document.getElementById("flagCount")
+    .innerText = flag;
+
+    document.getElementById("totalCount")
+    .innerText = data.length;
+
+    document.getElementById("loader")
+    .style.display = "none";
+
+  }
+
+  catch(error){
+
+    console.log(error);
+
+    document.getElementById("loader")
+    .innerHTML =
+    "Apps Script Permission Error";
+
+  }
+
+}
+
+loadDashboard();
+
+</script>
 
 </body>
 </html>

@@ -124,7 +124,7 @@
   <script>
 
     const API_URL =
-    "https://script.google.com/macros/s/AKfycbwRI1VEGMTfhlfjA_TRbtyqQzJ6HbONExEMyvKEG4vX71C4lIg-GgfRnv9XySpif_XjKw/exec";
+    "https://script.google.com/macros/s/AKfycbwDlS2WBFsAdN2Nz92iYkcqU5IpVjp45At7N7zDYSpekPQTBS9o8Ed47QcUZzok3HLTgw/exec";
 
     fetch(API_URL)
 
